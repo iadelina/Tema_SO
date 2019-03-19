@@ -1,0 +1,64 @@
+#!/bin/bash
+optiune1=0
+while true
+do
+	echo "=============================="
+	echo "MENIU"
+	echo "=============================="
+	echo "1.Iesire"
+	echo "2.Afisare informatii utilizator"
+	echo "3.Numarul si numele utilizatorilor login-ati"
+	echo "4.Afisarea tuturor shell-urilor instalate"
+	echo "5.Afisarea pt toti utlizatorii numele de login, numele definit si directorul de home"
+	echo "6.Afisare tip so, nume calculator, numar identificare kernel"
+	echo "7.Afisare procesor si frecventa de rulare"
+	echo "8.Afisare memorie totala si memorie libera"
+	echo "9.Afisare si cautare in loguri"
+	echo "Dati optiunea:"
+	read optiune1
+	case $optiune1 in
+	1) break ;;
+	2) echo "Nume login:" $USER
+	   echo "Cale home:" $HOME
+           echo "cale curenta:" `pwd`
+	   echo "Tip shell:" $SHELL;;
+        3) who --count;; 
+	4) awk -F '/' '{print $3}' /etc/shells;;
+        5) awk -F ':' '{print $1, $5, $6}' /etc/passwd;;
+        6) echo "Tip sistem de operare:" `uname --operating-system`
+	   echo "Nume calculator:" `uname --nodename`
+	   echo "Numar identificare kernel:" `uname --kernel-version`;;
+        7) echo "Tip procesor:" `cat /proc/cpuinfo | grep -E 'model name' | tail -1`
+	   echo "Frecventa de rulare:" `cat /proc/cpuinfo | grep -E 'cpu MHz' | tail -1`;;
+	8) echo "Memorie totala:" `cat /proc/meminfo | grep -E 'MemTotal'`
+	   echo "Memorie libera:" `cat /proc/meminfo | grep -E 'MemFree'`;;
+	9) echo "Afisare si cautare in loguri:"
+		optiune2=1
+		while true
+		do
+			echo "==================="
+			echo "MENIU LOGURI"
+			echo "==================="
+			echo "0.Iesire"
+			echo "1.Afisare loguri curente"
+			echo "2.Cautare in loguri"
+			echo "Dati optiunea:"
+			read optiune2
+			case $optiune2 in
+			0) break ;;
+			1) find /var/log -type f -not -name "*.gz";;
+			2) echo "Dati numele fisierului in care se cauta:"
+			   read nume
+			   echo "Dati textul cautat:"
+			   read text
+			   if [[ "$nume" == *"gz"* ]]; then
+				gunzip -c /var/log/$nume | grep $text				
+			   else
+			   	grep $text /var/log/$nume
+			   fi
+
+			esac
+		done
+	esac
+done
+
